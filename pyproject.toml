@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ssf-mission-tools"
+version = "0.1.0"
+description = "Utilities by SSF for generating DCS missons"
+authors = [ { name = "SSF Kurald", email = "iso8859-1@gmx.de" } ]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [ "argparse" ]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[project.scripts]
+ssf-tools = "ssf_mission_tools.cli:main"

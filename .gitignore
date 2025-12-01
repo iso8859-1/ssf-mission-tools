@@ -1,0 +1,9 @@
+.venv/
+env/
+venv/
+build/
+dist/
+__pycache__/
+*.egg-info/
+*.pyc
+ssf-tools.exe
