@@ -24,7 +24,7 @@ def _user_config_dir(app_name: str) -> Path:
 @dataclass
 class Config:
     dcs_path: str = "C:/Program Files/Eagle Dynamics/DCS World"
-    default_mission_dir: str = "%USERPROFILE%/Saved Games/DCS/Missions"
+    mission_dir: str = "%USERPROFILE%/Saved Games/DCS/Missions"
     #extra: Dict[str, Any] = field(default_factory=dict)
 
     _app_name: str = field(init=False, repr=False, default="ssf-mission-tools")
