@@ -26,6 +26,7 @@ class Init:
     def init_git_repo(self, workdir: str) -> None:
         import subprocess
         subprocess.run(["git", "init"], cwd=workdir, check=True)
+        
 
     def create_directory_structure(self, workdir: str) -> None:
         import os
@@ -36,6 +37,26 @@ class Init:
         dirs = ["scripts", "mission", "configs", "build"]
         for d in dirs:
             os.makedirs(os.path.join(workdir, d), exist_ok=True)
+
+        # create a sensible .gitignore for the repository
+        gitignore_path = os.path.join(workdir, ".gitignore")
+        gitignore_lines = [
+            "# Ignore build output\n",
+            "build/\n",
+        ]
+        if not os.path.exists(gitignore_path):
+            with open(gitignore_path, "w", encoding="utf-8") as gh:
+                gh.writelines(gitignore_lines)
+        else:
+            # ensure build/ is present in existing .gitignore
+            try:
+                with open(gitignore_path, "r", encoding="utf-8") as gh:
+                    existing = gh.read()
+            except Exception:
+                existing = ""
+            if "build/" not in existing:
+                with open(gitignore_path, "a", encoding="utf-8") as gh:
+                    gh.write("\n# Ignore build output\nbuild/\n")
 
     @classmethod
     def add_subparser(cls, parser: ArgumentParser) -> None:
