@@ -5,6 +5,7 @@ import argparse
 import sys
 from dataclasses import asdict
 from .config import Config
+from .init import Init
 
 def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="ssf-mission-tools")
@@ -12,8 +13,12 @@ def create_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     init= subparsers.add_parser("init", help="Initialize development directory")
+    Init.add_subparser(init)
+    
     update = subparsers.add_parser("update", help="Update mission files in development directory from the DCS mission")
+    
     build = subparsers.add_parser("build", help="Build the .miz file from the development directory")
+    
     config = subparsers.add_parser("config", help="Configure scripts")
     Config.add_subparser(config)
     return parser
