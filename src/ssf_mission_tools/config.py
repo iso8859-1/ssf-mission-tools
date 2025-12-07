@@ -94,8 +94,7 @@ class Config:
         cfg_save.add_argument("--dcs-path", type=str, help="Change DCS installation path")
 
     @classmethod
-    def handle_arguments(cls, args: Any) -> None:
-        cfg = Config.load_or_default()
+    def handle_arguments(cls, args: Any, cfg: "Config") -> None:
         if getattr(args, "cfg_cmd", None) == "show":
             import json
             data = asdict(cfg)
@@ -116,6 +115,8 @@ class Config:
             if p.exists():
                 p.unlink()
                 print(f"Deleted config file {p}")
+                return 0
             else:
                 print(f"No config file found at {p}")
-            return 0
+                return -1
+            
