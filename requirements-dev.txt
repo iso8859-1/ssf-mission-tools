@@ -1,1 +1,2 @@
 pyinstaller>=5.10
+pytest>=7.0

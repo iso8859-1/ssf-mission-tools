@@ -3,6 +3,7 @@ from mimetypes import init
 from typing import Any
 
 from ssf_mission_tools.config import Config
+from ssf_mission_tools.utils import unzip
 
 
 class Init:
@@ -27,6 +28,16 @@ class Init:
         import subprocess
         subprocess.run(["git", "init"], cwd=workdir, check=True)
         
+    def unpack_mission_files(self, mission_name: str, workdir: str) -> None:
+        import shutil
+        import os
+        mission_src = os.path.join(self.cfg.mission_dir, mission_name)
+        mission_dst = os.path.join(workdir, "build")
+        # clean up build directory if it exists
+        if os.path.exists(mission_dst):
+            shutil.rmtree(mission_dst)
+        # unzip mission files into build directory
+        unzip(mission_src, mission_dst)
 
     def create_directory_structure(self, workdir: str) -> None:
         import os
@@ -83,5 +94,7 @@ class Init:
         # create mission-config, copy mission files
         init.init_git_repo(workdir)
         init.create_directory_structure(workdir)
+        print("Unpacking mission files...")
+        init.unpack_mission_files(mission_name, workdir)
         print(f"Development directory {workdir} initialized successfully.")
         return 0
