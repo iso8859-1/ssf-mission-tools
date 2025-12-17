@@ -7,4 +7,4 @@ __pycache__/
 *.egg-info/
 *.pyc
 ssf-tools.exe
-.vscode/launch.json
+.vscode/
