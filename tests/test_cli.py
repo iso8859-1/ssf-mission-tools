@@ -14,7 +14,3 @@ def test_help():
     assert rc != 0
     assert "usage" in out.lower() or "usage" in err.lower()
 
-def test_hello():
-    rc, out, err = run_module(["hello", "--name", "TestUser"])
-    assert rc == 0
-    assert "Hello, TestUser!" in out

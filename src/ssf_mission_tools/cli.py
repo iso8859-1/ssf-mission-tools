@@ -8,7 +8,9 @@ from .config import Config
 from .init import Init
 
 def create_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="ssf-mission-tools")
+    # disable argparse's automatic top-level help so we can control exit code
+    parser = argparse.ArgumentParser(prog="ssf-mission-tools", add_help=False)
+    parser.add_argument("-h", "--help", action="store_true", help="Show this help and exit")
     parser.add_argument("--version", action="store_true", help="Show version and exit")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -32,6 +34,11 @@ def main(argv: list[str] | None = None) -> int:
         from . import __version__
         print(__version__)
         return 0
+
+    # top-level help should print usage and return non-zero (test expects non-zero)
+    if getattr(args, "help", False):
+        parser.print_help()
+        return 2
 
     if args.command == "config":
         return Config.handle_arguments(args, cfg)
