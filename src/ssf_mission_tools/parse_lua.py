@@ -49,3 +49,40 @@ def parse_lua_table_file(path: str | Path) -> Any:
     # slpp expects a Lua table expression; decode to Python
     data = lua.decode(tbl)
     return {"variable": None, "data": data}
+
+def sort_and_write(variable: str | None, data: Any, path: str | Path) -> None:
+    """Sort a Lua table and write it back to file.
+
+    This function sorts dictionary keys by a natural-order key derived from
+    the string representation of each key (so numeric substrings sort
+    numerically: "1","2","10" -> 1,2,10). Works with mixed string/number keys.
+    """
+    def natural_key(k: Any):
+        s = str(k)
+        parts = re.split(r'(\d+)', s)
+        key_parts = []
+        for part in parts:
+            if not part:
+                continue
+            if part.isdigit():
+                key_parts.append((0, int(part)))
+            else:
+                key_parts.append((1, part.lower()))
+        return tuple(key_parts)
+
+    def sort_table(obj: Any) -> Any:
+        if isinstance(obj, dict):
+            items = sorted(obj.items(), key=lambda kv: natural_key(kv[0]))
+            return {k: sort_table(v) for k, v in items}
+        elif isinstance(obj, list):
+            return [sort_table(item) for item in obj]
+        else:
+            return obj
+
+    sorted_data = sort_table(data)
+    lua_table_str = lua.encode(sorted_data)
+    with open(path, "w", encoding="utf-8") as f:
+        if variable:
+            f.write(f"{variable} = {lua_table_str}\n")
+        else:
+            f.write(f"{lua_table_str}\n")

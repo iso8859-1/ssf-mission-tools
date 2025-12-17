@@ -75,6 +75,25 @@ class Init:
                 with open(gitignore_path, "a", encoding="utf-8") as gh:
                     gh.write("\n# Ignore build output\nbuild/\n")
 
+    def sort_and_copy_special_files(self, workdir: str) -> None:
+        from .parse_lua import parse_lua_table_file, sort_and_write
+        import os
+        # special handling for dictionary.lua and mapResource.lua
+        special_files_resources = ["dictionary", "mapResource"]
+        for filename in special_files_resources:
+            src_path = os.path.join(workdir, "build", "I10n", "Default", filename)
+            if os.path.exists(src_path):
+                variable, data = parse_lua_table_file(src_path).values()
+                dst_path = os.path.join(workdir, "mission", "I10n", "Default", filename)
+                sort_and_write(variable, data, dst_path)
+        special_files = ["mission", "options", "warehouses"]
+        for filename in special_files:
+            src_path = os.path.join(workdir, "build", filename)
+            if os.path.exists(src_path):
+                variable, data = parse_lua_table_file(src_path).values()
+                dst_path = os.path.join(workdir, "mission", filename)
+                sort_and_write(variable, data, dst_path)
+
     @classmethod
     def add_subparser(cls, parser: ArgumentParser) -> None:
         parser.add_argument("-d", "--directory", type=str, default=".", help="Target directory for initialization")
@@ -106,5 +125,7 @@ class Init:
         copy_resources(workdir)
         print("Copying kneeboard files...")
         copy_kneeboard(workdir)
+        print("Sorting and copying special Lua files...")
+        init.sort_and_copy_special_files(workdir)
         print(f"Development directory {workdir} initialized successfully.")
         return 0
