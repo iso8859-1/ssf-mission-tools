@@ -75,6 +75,13 @@ class Init:
                 with open(gitignore_path, "a", encoding="utf-8") as gh:
                     gh.write("\n# Ignore build output\nbuild/\n")
 
+    def copy_theater(self, workdir: str) -> None:
+        import shutil
+        import os
+        theater_src = os.path.join(workdir, "build", "theatre")
+        theater_dst = os.path.join(workdir, "mission", "theatre")
+        shutil.copy(theater_src, theater_dst)
+
     def sort_and_copy_special_files(self, workdir: str) -> None:
         from .parse_lua import parse_lua_table_file, sort_and_write
         import os
@@ -121,6 +128,8 @@ class Init:
         init.create_directory_structure(workdir)
         print("Unpacking mission files...")
         init.unpack_mission_files(mission_name, workdir)
+        print("Copying theater...")
+        init.copy_theater(workdir)
         print("Copying resource files...")
         copy_resources(workdir)
         print("Copying kneeboard files...")
