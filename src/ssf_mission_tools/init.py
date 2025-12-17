@@ -4,6 +4,7 @@ from typing import Any
 
 from ssf_mission_tools.config import Config
 from ssf_mission_tools.utils import unzip
+from ssf_mission_tools.common import copy_kneeboard, copy_resources
 
 
 class Init:
@@ -48,6 +49,11 @@ class Init:
         dirs = ["scripts", "mission", "configs", "build"]
         for d in dirs:
             os.makedirs(os.path.join(workdir, d), exist_ok=True)
+        #add subfolders KNEEBOARD and I10n inside mission
+        os.makedirs(os.path.join(workdir, "mission", "KNEEBOARD", "IMAGES"), exist_ok=True)
+        #place empty file in IMAGES to ensure git tracks the folder
+        open(os.path.join(workdir, "mission", "KNEEBOARD", "IMAGES", "place_images_here"), "a").close()
+        # I10n/Default not required, will be created when copying mission
 
         # create a sensible .gitignore for the repository
         gitignore_path = os.path.join(workdir, ".gitignore")
@@ -96,5 +102,9 @@ class Init:
         init.create_directory_structure(workdir)
         print("Unpacking mission files...")
         init.unpack_mission_files(mission_name, workdir)
+        print("Copying resource files...")
+        copy_resources(workdir)
+        print("Copying kneeboard files...")
+        copy_kneeboard(workdir)
         print(f"Development directory {workdir} initialized successfully.")
         return 0
